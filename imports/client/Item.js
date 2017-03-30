@@ -1,24 +1,14 @@
-//Test of Git
-
 import React, { Component } from 'react';
 import Items from '../api/Items';
 
 export default class Item extends Component {
     voteOne() {
-        Items.update(this.props.item._id, {
-            $inc: {
-                'itemOne.value':  1
-            }
-        })
-    }
+      Meteor.call('voteOnItem', this.props.item, 'itemOne');
+      }
 
     voteTwo() {
-        Items.update(this.props.item._id, {
-            $inc: {
-                'itemTwo.value':  1
-            }
-        })
-    }
+      Meteor.call('voteOnItem', this.props.item, 'itemTwo');
+      }
 
   render() {
     return (
