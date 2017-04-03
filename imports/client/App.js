@@ -21,12 +21,28 @@ class App extends Component {
       });
     }
   }
+
+  showAll(){
+    if(this.props.showAll) {
+       Session.set('showAll', false);
+    } else {
+       Session.set('showAll', true);
+    }
+   
+  }
+
   render() {
+    if (!this.props.ready){
+      return <div>Loading</div>;
+    }
+
     return (
       <div>
         <header>
           <h1>Level Up Voting</h1>
           <LoginButtons />
+          <button onClick={this.showAll.bind(this)}>
+          Show {this.props.showAll ? 'One' : 'All'}</button>
         </header>
         <main>
           <form className='new-items' onSubmit={this.addItems.bind(this)}>
@@ -45,7 +61,14 @@ class App extends Component {
 
 
 export default createContainer(() => {
+  let itemsSub = Meteor.subscribe('allItems');
+  let showAll = Session.get('showAll');
   return {
-    items: Items.find({}).fetch()
+    showAll,
+    ready: itemsSub.ready(),
+    items: Items.find({}, {
+      limit: showAll ? 50 : 1,
+      sort: { lastUpdated: 1 }
+    }).fetch()
   }
 }, App);
